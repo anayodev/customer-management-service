@@ -8,6 +8,11 @@ public class Customer {
 
     private String secondName;
 
+    public Customer(Long id, String firstName, String secondName) {
+        this.id = id;
+        this.firstName = firstName;
+        this.secondName = secondName;
+    }
 
     public Long getId() {
         return id;
