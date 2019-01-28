@@ -1,6 +1,7 @@
 package com.company.customermanagementservice.service;
 
 import com.company.customermanagementservice.model.Customer;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Repository
 public class CustomerRepositoryImpl implements CustomerRepository {
 
     private Map<Long, Customer> customers;
