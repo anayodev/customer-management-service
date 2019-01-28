@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,4 +39,16 @@ public class CustomerManagementServiceIntegrationTest {
 		assertThat(response.getBody().get(0).getFirstName()).isEqualTo("John");
 		assertThat(response.getBody().get(0).getSecondName()).isEqualTo("Doe");
 	}
+    @Test
+    public void creatingCustomer_succeeds(){
+        Customer customer = new Customer(null, "Mary", "Poppins");
+        ResponseEntity<Customer> createdCustomer = testRestTemplate.exchange(targetUrl,HttpMethod.POST,
+                new HttpEntity<>(customer) , new ParameterizedTypeReference<Customer>() {});
+
+        assertThat(createdCustomer.getStatusCode()).isEqualTo(201);
+        assertThat(createdCustomer.getBody()).isNotNull();
+        assertThat(createdCustomer.getBody().getFirstName()).isEqualTo("Mary");
+        assertThat(createdCustomer.getBody().getId()).isNotNull();
+    }
+	
 }
