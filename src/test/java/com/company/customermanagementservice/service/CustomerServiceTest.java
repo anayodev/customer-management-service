@@ -3,7 +3,9 @@ package com.company.customermanagementservice.service;
 import com.company.customermanagementservice.model.Customer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +14,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CustomerServiceTest {
     @Mock
     private CustomerRepository customerRepository;
