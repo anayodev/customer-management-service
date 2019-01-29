@@ -8,7 +8,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,5 +67,13 @@ public class CustomerServiceTest {
         customerService.deleteCustomer(10L);
 
         verify(customerRepository, times(1)).delete(customerId);
+    }
+
+
+    @Test(expected = EntityNotFoundException.class)
+    public void deleteCustomer_throwsNotFoundException(){
+        given(customerRepository.findById(100L)).willReturn(Optional.empty());
+
+        customerService.deleteCustomer(100L);
     }
 }

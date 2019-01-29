@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,5 +50,10 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public void delete(Long customerId) {
         customers.remove(customerId);
+    }
+
+    @Override
+    public Optional<Customer> findById(long customerId) {
+        return Optional.empty();
     }
 }

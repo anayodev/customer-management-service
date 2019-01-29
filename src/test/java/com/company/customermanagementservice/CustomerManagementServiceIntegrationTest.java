@@ -3,6 +3,7 @@ package com.company.customermanagementservice;
 import com.company.customermanagementservice.model.Customer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,23 @@ public class CustomerManagementServiceIntegrationTest {
 
 		assertThat(response.getBody().contains(customerCreated)).isFalse();
 	}
+
+	@Test
+	public void deletingCustomer_FailsWhenCustomerIdNotFound() throws JsonProcessingException {
+		//perform delete of object
+		ResponseEntity<String> deleteResponse = testRestTemplate.exchange(targetUrl +"/100", HttpMethod.DELETE,
+				buildHttpEntity("", getHeadersValues())
+				, String.class);
+
+		assertThat(deleteResponse.getStatusCode().value()).isEqualTo(404);
+		assertThat(JsonPath.parse(deleteResponse.getBody())
+				.read("$.message", String.class))
+				.isEqualTo("Customer cannot be deleted");
+		assertThat(JsonPath.parse(deleteResponse.getBody())
+				.read("$.debugMessage", String.class))
+				.isEqualTo("Customer with Id 100 does not exist");
+	}
+	
 
 	private ResponseEntity<Customer> postCustomer(Customer customer){
 
