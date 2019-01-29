@@ -1,19 +1,22 @@
 package com.company.customermanagementservice;
 
 import com.company.customermanagementservice.model.Customer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,13 +45,59 @@ public class CustomerManagementServiceIntegrationTest {
     @Test
     public void creatingCustomer_succeeds(){
         Customer customer = new Customer(null, "Mary", "Poppins");
-        ResponseEntity<Customer> createdCustomer = testRestTemplate.exchange(targetUrl,HttpMethod.POST,
-                new HttpEntity<>(customer) , new ParameterizedTypeReference<Customer>() {});
+        ResponseEntity<Customer> createdCustomer = postCustomer(customer);
 
         assertThat(createdCustomer.getStatusCode().value()).isEqualTo(201);
         assertThat(createdCustomer.getBody()).isNotNull();
         assertThat(createdCustomer.getBody().getFirstName()).isEqualTo("Mary");
         assertThat(createdCustomer.getBody().getId()).isNotNull();
     }
-	
+
+	@Test
+	public void deletingCustomer_succeeds() throws JsonProcessingException {
+		Customer customerToAdd = new Customer(null,"James", "Doe");
+
+		//perform post of object
+		ResponseEntity<Customer> customerResponseEntity = postCustomer(customerToAdd);
+
+		long customerId = customerResponseEntity.getBody().getId();
+		Customer customerCreated = customerResponseEntity.getBody();
+
+		//perform delete of object
+		ResponseEntity<String> deleteResponse = testRestTemplate.exchange
+				(String.format("%s/%d",targetUrl,customerId), HttpMethod.DELETE,
+				buildHttpEntity("", getHeadersValues()), String.class);
+
+		//start verification
+		ResponseEntity<List<Customer>> response = testRestTemplate.exchange(targetUrl,HttpMethod.GET,null,
+				new ParameterizedTypeReference<List<Customer>>() {});
+
+		assertThat(deleteResponse.getBody()).isEqualTo(
+				String.format("{\"message\":\"Customer with id:%d successfully deleted\"}", customerId));
+
+		assertThat(deleteResponse.getStatusCode().value()).isEqualTo(200);
+
+		assertThat(response.getBody().contains(customerCreated)).isFalse();
+	}
+
+	private ResponseEntity<Customer> postCustomer(Customer customer){
+
+		return testRestTemplate.exchange(targetUrl,HttpMethod.POST,
+				new HttpEntity<>(customer) , new ParameterizedTypeReference<Customer>() {});
+	}
+
+	private HttpEntity<String> buildHttpEntity(Object requestBodyObj, Map<String, String> headersValues )
+			throws JsonProcessingException {
+		HttpHeaders headers = new HttpHeaders();
+
+		headersValues.forEach(headers::add);
+
+		String requestBody = new ObjectMapper().writeValueAsString(requestBodyObj);
+
+		return new HttpEntity<>(requestBody, headers);
+	}
+	private Map<String, String> getHeadersValues(){
+		return Stream.of(new AbstractMap.SimpleEntry<>("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+				.collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+	}
 }

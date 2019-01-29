@@ -45,4 +45,9 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
         return newCustomer;
     }
+
+    @Override
+    public void delete(Long customerId) {
+
+    }
 }

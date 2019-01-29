@@ -8,4 +8,6 @@ public interface CustomerRepository {
     List<Customer> findAll();
 
     Customer createCustomer(Customer customerToBeCreated);
+
+    void delete(Long customerId);
 }

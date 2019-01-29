@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomerServiceTest {
@@ -50,5 +53,17 @@ public class CustomerServiceTest {
         Customer customerReturned = customerService.createCustomer(customerToBeSaved);
         assertThat(customerReturned.getId()).isEqualTo(1L);
         assertThat(customerReturned.getFirstName()).isEqualTo("James");
+    }
+
+    @Test
+    public void deleteCustomer_succeeds(){
+
+        Long customerId = 10L;
+
+        Mockito.doNothing().when(customerRepository).delete(customerId);
+
+        customerService.deleteCustomer(10L);
+
+        verify(customerRepository, times(1)).delete(customerId);
     }
 }

@@ -5,6 +5,7 @@ import com.company.customermanagementservice.service.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -69,5 +70,23 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.firstName").value("James"))
                 .andExpect(jsonPath("$.secondName").value("Doe"));
+    }
+
+    @Test
+    public void deletingCustomer_succeeds() throws Exception {
+        long customerId = 10L;
+
+        given(customerService.deleteCustomer(customerId))
+                .willReturn(String.format("{\"message\":\"Customer with id:%d successfully deleted\"}", customerId));
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(String.format("%s/%d",targetUrl,customerId))
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("message")
+                        .value(String.format("Customer with id:%d successfully deleted", customerId)));
+
     }
 }

@@ -24,4 +24,9 @@ public class CustomerServiceImpl implements CustomerService {
     public List<Customer> findAllCustomers() {
         return customerRepository.findAll();
     }
+
+    @Override
+    public String deleteCustomer(Long l) {
+        return null;
+    }
 }
