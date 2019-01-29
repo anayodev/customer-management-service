@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
 public class CustomerRepositoryTest {
 
@@ -17,8 +18,24 @@ public class CustomerRepositoryTest {
         CustomerRepository customerRepository = new CustomerRepositoryImpl();
 
         List<Customer> allReturnedCustomers = customerRepository.findAll();
+
         assertThat(allReturnedCustomers.size()).isEqualTo(2);
         assertThat(allReturnedCustomers.get(0).getFirstName()).isEqualTo("John");
         assertThat(allReturnedCustomers.get(0).getSecondName()).isEqualTo("Doe");
+    }
+
+    @Test
+    public void saveCustomer_succeeds(){
+        // Customer ids are meant to be sequential, with 2 customers in the instantiated object,
+        // the next id is meant to be 3
+
+        CustomerRepository customerRepository = new CustomerRepositoryImpl();
+
+        Customer customerToBeSaved = new Customer(null, "James", "Doe");
+
+        Customer customerReturned = customerRepository.createCustomer(customerToBeSaved);
+
+        assertThat(customerReturned.getId()).isEqualTo(3L);
+        assertThat(customerReturned.getFirstName()).isEqualTo("James");
     }
 }
