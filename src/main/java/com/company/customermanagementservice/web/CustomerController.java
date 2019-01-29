@@ -30,4 +30,10 @@ public class CustomerController {
     public Customer createCustomer(@RequestBody Customer customer){
         return customerService.createCustomer(customer);
     }
+
+    @DeleteMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public String deleteCustomer(@PathVariable Long id){
+        customerService.deleteCustomer(id);
+        return String.format("{\"message\":\"Customer with id:%d successfully deleted\"}", id);
+    }
 }

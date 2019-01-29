@@ -26,7 +26,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public String deleteCustomer(Long l) {
-        return null;
+    public void deleteCustomer(Long customerId) {
+
+        customerRepository.delete(customerId);
     }
 }

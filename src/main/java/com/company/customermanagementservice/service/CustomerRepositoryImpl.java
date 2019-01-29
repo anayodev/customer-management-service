@@ -48,6 +48,6 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public void delete(Long customerId) {
-
+        customers.remove(customerId);
     }
 }

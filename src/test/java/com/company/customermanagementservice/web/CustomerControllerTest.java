@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -76,8 +77,7 @@ public class CustomerControllerTest {
     public void deletingCustomer_succeeds() throws Exception {
         long customerId = 10L;
 
-        given(customerService.deleteCustomer(customerId))
-                .willReturn(String.format("{\"message\":\"Customer with id:%d successfully deleted\"}", customerId));
+        willDoNothing().given(customerService).deleteCustomer(customerId);
 
         mockMvc.perform(MockMvcRequestBuilders.delete(String.format("%s/%d",targetUrl,customerId))
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -86,7 +86,7 @@ public class CustomerControllerTest {
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("message")
-                        .value(String.format("Customer with id:%d successfully deleted", customerId)));
+                        .value("Customer with id:10 successfully deleted"));
 
     }
 }

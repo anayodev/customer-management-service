@@ -9,5 +9,5 @@ public interface CustomerService {
 
     List<Customer> findAllCustomers();
 
-    String deleteCustomer(Long l);
+    void deleteCustomer(Long customerId);
 }
