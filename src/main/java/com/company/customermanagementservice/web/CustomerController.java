@@ -3,6 +3,7 @@ package com.company.customermanagementservice.web;
 import com.company.customermanagementservice.model.Customer;
 import com.company.customermanagementservice.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class CustomerController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public Customer createCustomer(@RequestBody Customer customer){
         return customerService.createCustomer(customer);
     }

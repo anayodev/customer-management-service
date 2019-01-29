@@ -45,7 +45,7 @@ public class CustomerManagementServiceIntegrationTest {
         ResponseEntity<Customer> createdCustomer = testRestTemplate.exchange(targetUrl,HttpMethod.POST,
                 new HttpEntity<>(customer) , new ParameterizedTypeReference<Customer>() {});
 
-        assertThat(createdCustomer.getStatusCode()).isEqualTo(201);
+        assertThat(createdCustomer.getStatusCode().value()).isEqualTo(201);
         assertThat(createdCustomer.getBody()).isNotNull();
         assertThat(createdCustomer.getBody().getFirstName()).isEqualTo("Mary");
         assertThat(createdCustomer.getBody().getId()).isNotNull();

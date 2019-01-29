@@ -63,7 +63,7 @@ public class CustomerControllerTest {
                 .content(requestBody)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.id").value(1L))
