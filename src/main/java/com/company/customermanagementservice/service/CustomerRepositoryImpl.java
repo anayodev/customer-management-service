@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,11 +16,20 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     private Map<Long, Customer> customers;
 
+    private final AtomicLong lastIdHolder;
+
     public CustomerRepositoryImpl() {
+
+        lastIdHolder = new AtomicLong();
+
         this.customers = Stream.of(
-                new Customer(1L, "John", "Doe"),
-                new Customer(2L, "Mary", "Doe"))
+                new Customer(getNextId(), "John", "Doe"),
+                new Customer(getNextId(), "Mary", "Doe"))
                 .collect(Collectors.toConcurrentMap(Customer::getId, customer -> customer));
+    }
+
+    private Long getNextId(){
+        return lastIdHolder.incrementAndGet();
     }
 
     @Override
@@ -28,6 +39,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Customer createCustomer(Customer customerToBeSaved) {
-        return null;
+        Customer newCustomer = new Customer(getNextId(), customerToBeSaved.getFirstName(),
+                customerToBeSaved.getSecondName());
+
+        customers.put(newCustomer.getId(), newCustomer);
+
+        return newCustomer;
     }
 }
