@@ -25,4 +25,9 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     public List<Customer> findAll() {
         return new ArrayList<>(customers.values());
     }
+
+    @Override
+    public Customer createCustomer(Customer customerToBeSaved) {
+        return null;
+    }
 }

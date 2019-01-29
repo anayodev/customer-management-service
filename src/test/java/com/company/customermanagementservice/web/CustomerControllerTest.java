@@ -2,6 +2,7 @@ package com.company.customermanagementservice.web;
 
 import com.company.customermanagementservice.model.Customer;
 import com.company.customermanagementservice.service.CustomerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,28 @@ public class CustomerControllerTest {
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$[0].firstName").value("John"))
+                .andExpect(jsonPath("$[0].secondName").value("Doe"));
+    }
+
+    @Test
+    public void createCustomer_Succeeds() throws Exception{
+
+        Customer customerToBeSaved = new Customer(null, "James", "Doe");
+        Customer customerSaved = new Customer(1L, "James", "Doe");
+
+        String requestBody = new ObjectMapper().writeValueAsString(customerToBeSaved);
+
+        given(customerService.createCustomer(customerToBeSaved)).willReturn(customerSaved);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(targetUrl)
+                .content(requestBody)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].firstName").value("James"))
                 .andExpect(jsonPath("$[0].secondName").value("Doe"));
     }
 }

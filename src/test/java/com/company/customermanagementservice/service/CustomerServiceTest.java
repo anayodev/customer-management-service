@@ -39,4 +39,16 @@ public class CustomerServiceTest {
         assertThat(allReturnedCustomers.get(0).getFirstName()).isEqualTo("John");
         assertThat(allReturnedCustomers.get(0).getSecondName()).isEqualTo("Doe");
     }
+
+    @Test
+    public void saveCustomer_succeeds(){
+        Customer customerToBeSaved = new Customer(null, "James", "Doe");
+        Customer customerSaved = new Customer(1L, "James", "Doe");
+
+        given(customerRepository.createCustomer(customerToBeSaved)).willReturn(customerSaved);
+
+        Customer customerReturned = customerService.createCustomer(customerToBeSaved);
+        assertThat(customerReturned.getId()).isEqualTo(1L);
+        assertThat(customerReturned.getFirstName()).isEqualTo("James");
+    }
 }

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface CustomerRepository {
     List<Customer> findAll();
+
+    Customer createCustomer(Customer customerToBeSaved);
 }
