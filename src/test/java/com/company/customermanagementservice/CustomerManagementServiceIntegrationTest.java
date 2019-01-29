@@ -38,7 +38,7 @@ public class CustomerManagementServiceIntegrationTest {
 				new ParameterizedTypeReference<List<Customer>>() {});
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().size()).isEqualTo(2);
+		assertThat(response.getBody().size()).isGreaterThanOrEqualTo(2);
 		assertThat(response.getBody().get(0).getId()).isEqualTo(1);
 		assertThat(response.getBody().get(0).getFirstName()).isEqualTo("John");
 		assertThat(response.getBody().get(0).getSecondName()).isEqualTo("Doe");
@@ -53,7 +53,56 @@ public class CustomerManagementServiceIntegrationTest {
         assertThat(createdCustomer.getBody().getFirstName()).isEqualTo("Mary");
         assertThat(createdCustomer.getBody().getId()).isNotNull();
     }
+    
+	@Test
+	public void postingBlankCustomerFields_throwsBadRequest() throws JsonProcessingException {
+		Customer customerToAdd = new Customer(null,"", "");
+		Customer customerToAddForSubErrorMessage = new Customer(null,"", "AAA");
 
+		//posts
+		ResponseEntity<String> createCustomerResponse = testRestTemplate.exchange(targetUrl, HttpMethod.POST,
+				buildHttpEntity(customerToAdd, getHeadersValues())
+				, String.class);
+
+		ResponseEntity<String> createCustomerResponse2 = testRestTemplate.exchange(targetUrl, HttpMethod.POST,
+				buildHttpEntity(customerToAddForSubErrorMessage, getHeadersValues())
+				, String.class);
+
+		//verifications
+		assertThat(createCustomerResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(JsonPath.parse(createCustomerResponse.getBody()).read("$.subErrors.length()", Integer.class))
+				.isEqualTo(2);
+		assertThat(JsonPath.parse(createCustomerResponse2.getBody())
+				.read("$.subErrors[0].message", String.class))
+				.isEqualTo("First name should have between 1 and 60 characters");
+
+	}
+
+	@Test
+	public void postingExistingCustomerId_throwsBadRequest() throws JsonProcessingException{
+		// Customer 1L, James, Doe already exists from start up initialization of repository
+		// Two James Doe will be allowed be allowed as names are not unique, but same id, first name,
+		// second name will not be allowed
+		Customer customerToAdd = new Customer(null, "James", "Doe");
+
+		ResponseEntity<Customer> customerToAddResponse = postCustomer(customerToAdd);
+
+		Customer repeatedCustomer = new Customer(1L, "James", "Doe");
+
+		ResponseEntity<String> createCustomerResponse = testRestTemplate.exchange(targetUrl, HttpMethod.POST,
+				buildHttpEntity(customerToAdd, getHeadersValues())
+				, String.class);
+
+		//Assert same first name and second name is allowed
+		assertThat(customerToAddResponse.getStatusCode().value()).isEqualTo(HttpStatus.CREATED);
+
+		//Assert repeated id, first name and second name is not allowed
+		assertThat(createCustomerResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(JsonPath.parse(createCustomerResponse.getBody())
+				.read("$.message", String.class))
+				.isEqualTo("Constraint Violation - Customer with id:1 already exists");
+	}
+    
 	@Test
 	public void deletingCustomer_succeeds() throws JsonProcessingException {
 		Customer customerToAdd = new Customer(null,"James", "Doe");
