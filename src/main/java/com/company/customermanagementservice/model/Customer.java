@@ -1,5 +1,7 @@
 package com.company.customermanagementservice.model;
 
+import java.util.Objects;
+
 public class Customer {
 
     private Long id;
@@ -24,5 +26,20 @@ public class Customer {
 
     public String getSecondName() {
         return secondName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(id, customer.id) &&
+                Objects.equals(firstName, customer.firstName) &&
+                Objects.equals(secondName, customer.secondName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, secondName);
     }
 }

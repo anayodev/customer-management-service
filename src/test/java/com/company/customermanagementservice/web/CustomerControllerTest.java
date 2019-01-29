@@ -66,8 +66,8 @@ public class CustomerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].firstName").value("James"))
-                .andExpect(jsonPath("$[0].secondName").value("Doe"));
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.firstName").value("James"))
+                .andExpect(jsonPath("$.secondName").value("Doe"));
     }
 }
