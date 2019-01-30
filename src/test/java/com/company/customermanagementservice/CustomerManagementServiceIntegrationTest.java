@@ -99,7 +99,7 @@ public class CustomerManagementServiceIntegrationTest {
 		//Assert repeated id, first name and second name is not allowed
 		assertThat(repeatedCreateCustomerResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(JsonPath.parse(repeatedCreateCustomerResponse.getBody())
-				.read("$.message", String.class))
+				.read("$.debugMessage", String.class))
 				.isEqualTo("Constraint Violation - Customer with id:1 already exists");
 	}
     
