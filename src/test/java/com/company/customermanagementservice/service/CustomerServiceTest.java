@@ -62,11 +62,15 @@ public class CustomerServiceTest {
 
         Long customerId = 10L;
 
+        given(customerRepository.findById(customerId)).willReturn(
+                Optional.of(new Customer(10L,"James", "Does")));
+
         Mockito.doNothing().when(customerRepository).delete(customerId);
 
         customerService.deleteCustomer(10L);
 
         verify(customerRepository, times(1)).delete(customerId);
+        verify(customerRepository, times(1)).findById(customerId);
     }
 
 

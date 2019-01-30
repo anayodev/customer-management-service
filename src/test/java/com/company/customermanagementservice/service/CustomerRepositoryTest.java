@@ -67,11 +67,11 @@ public class CustomerRepositoryTest {
 
         customerRepository.createCustomer(customer);
     }
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void postingExistingCustomerId_throwsException() {
 
 
-        expectedException.expect(IndexOutOfBoundsException.class);
+        expectedException.expect(DataIntegrityViolationException.class);
 
         expectedException.expectMessage("Constraint Violation - Customer with id:3 already exists");
 

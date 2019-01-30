@@ -89,16 +89,16 @@ public class CustomerManagementServiceIntegrationTest {
 
 		Customer repeatedCustomer = new Customer(1L, "James", "Doe");
 
-		ResponseEntity<String> createCustomerResponse = testRestTemplate.exchange(targetUrl, HttpMethod.POST,
-				buildHttpEntity(customerToAdd, getHeadersValues())
+		ResponseEntity<String> repeatedCreateCustomerResponse = testRestTemplate.exchange(targetUrl, HttpMethod.POST,
+				buildHttpEntity(repeatedCustomer, getHeadersValues())
 				, String.class);
 
 		//Assert same first name and second name is allowed
-		assertThat(customerToAddResponse.getStatusCode().value()).isEqualTo(HttpStatus.CREATED);
+		assertThat(customerToAddResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		//Assert repeated id, first name and second name is not allowed
-		assertThat(createCustomerResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-		assertThat(JsonPath.parse(createCustomerResponse.getBody())
+		assertThat(repeatedCreateCustomerResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(JsonPath.parse(repeatedCreateCustomerResponse.getBody())
 				.read("$.message", String.class))
 				.isEqualTo("Constraint Violation - Customer with id:1 already exists");
 	}

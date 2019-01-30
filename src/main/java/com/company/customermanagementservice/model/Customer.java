@@ -1,13 +1,19 @@
 package com.company.customermanagementservice.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 public class Customer {
 
     private Long id;
 
+    @NotNull(message ="First name should have between 1 and 60 characters")
+    @Size(min = 1, max = 60, message ="First name should have between 1 and 60 characters" )
     private String firstName;
 
+    @NotNull(message ="Second name should have between 1 and 60 characters")
+    @Size(min = 1, max = 60, message ="Second name should have between 1 and 60 characters")
     private String secondName;
 
     public Customer(Long id, String firstName, String secondName) {
